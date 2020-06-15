@@ -1,4 +1,4 @@
-# EV Charging Station
+# NOT EV Charging Station
 
 The proposed EVCS provides a single-phase home used EVCS, which means EV can be charged with 230VAC, 10-30A power source. A 24kWh battery with a 3.3kW (15 A) charger would take less than 8 hours to fully charge.
 
