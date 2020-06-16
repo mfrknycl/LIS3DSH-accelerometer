@@ -30,7 +30,11 @@ extern I2C_HandleTypeDef hi2c1;
 #define LIS3DSH_CTRL_REG5_ADDR               0x24
 #define LIS3DSH_CTRL_REG6_ADDR               0x25
 
+#define LIS3DSH_FIFO_CTRL_REG								 0x2E
+
 #define LIS3DSH_STATUS_ADDR                  0x27
+
+#define LIS3DSH_OUT_TEMP    							   0x0C
 
 #define LIS3DSH_OUT_X_L_ADDR                 0x28
 #define LIS3DSH_OUT_X_H_ADDR                 0x29
@@ -111,6 +115,14 @@ void writeReg(uint8_t reg, uint8_t value);
 uint8_t readReg(uint8_t reg);
 void startup(void);
 uint8_t readAcc();
+void readAccel(int16_t *pX, int16_t *pY, int16_t *pZ);
+
+void LIS3DSH_X_calibrate(float x_min, float x_max);
+void LIS3DSH_Y_calibrate(float y_min, float y_max);
+void LIS3DSH_Z_calibrate(float z_min, float z_max);
+
+void LIS3DSH_WriteIO(uint8_t reg, uint8_t *dataW, uint8_t size);
+void LIS3DSH_ReadIO(uint8_t reg, uint8_t *dataR, uint8_t size);
 
 
 
