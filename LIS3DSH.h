@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <string.h>
 
+
 extern I2C_HandleTypeDef hi2c1;
 /* Variables ------------------------------------------------------------------*/
 
@@ -123,8 +124,10 @@ void LIS3DSH_Z_calibrate(float z_min, float z_max);
 
 void LIS3DSH_WriteIO(uint8_t reg, uint8_t *dataW, uint8_t size);
 void LIS3DSH_ReadIO(uint8_t reg, uint8_t *dataR, uint8_t size);
-
-
+void LIS3DSH_Init(I2C_HandleTypeDef *accI2C, LIS3DSH_InitTypeDef *accInitDef);
+bool LIS3DSH_PollDRDY(uint32_t msTimeout);
+LIS3DSH_DataScaled LIS3DSH_GetDataScaled(void);
+LIS3DSH_DataRaw LIS3DSH_GetDataRaw(void);
 
 
 
