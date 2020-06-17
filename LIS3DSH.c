@@ -115,19 +115,19 @@ bool LIS3DSH_PollDRDY(uint32_t msTimeout){
 	*	@brief Get Accelerometer raw data
 	*/
 LIS3DSH_DataRaw LIS3DSH_GetDataRaw(void){
-	uint8_t spiBuf[2];
+	uint8_t I2CBuf[2];
 	LIS3DSH_DataRaw tempDataRaw;
 	//Read X data
-	LIS3DSH_ReadIO(LIS3DSH_OUT_X_L_ADDR, spiBuf, 2);
-	tempDataRaw.x = ((spiBuf[1] << 8) + spiBuf[0]);
+	LIS3DSH_ReadIO(LIS3DSH_OUT_X_L_ADDR, I2CBuf, 2);
+	tempDataRaw.x = ((I2CBuf[1] << 8) + I2CBuf[0]);
 	
 	//Read Y data
-	LIS3DSH_ReadIO(LIS3DSH_OUT_Y_L_ADDR, spiBuf, 2);
-	tempDataRaw.y = ((spiBuf[1] << 8) + spiBuf[0]);
+	LIS3DSH_ReadIO(LIS3DSH_OUT_Y_L_ADDR, I2CBuf, 2);
+	tempDataRaw.y = ((I2CBuf[1] << 8) + I2CBuf[0]);
 	
 	//Read Z data
-	LIS3DSH_ReadIO(LIS3DSH_OUT_Z_L_ADDR, spiBuf, 2);
-	tempDataRaw.z = ((spiBuf[1] << 8) + spiBuf[0]);
+	LIS3DSH_ReadIO(LIS3DSH_OUT_Z_L_ADDR, I2CBuf, 2);
+	tempDataRaw.z = ((I2CBuf[1] << 8) + I2CBuf[0]);
 	
 	return tempDataRaw;
 }

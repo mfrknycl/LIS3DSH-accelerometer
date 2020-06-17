@@ -60,7 +60,12 @@ static void MX_I2C1_Init(void);
 /* USER CODE BEGIN 0 */
 int deneme = 0;
 LIS3DSH_DataScaled myData;
+uint8_t temp = 0;
 
+uint8_t data1 = 0x00;
+uint8_t data2 = 0xF0;
+uint8_t data3 = 0xA0;
+uint8_t res = 0;
 
 /* USER CODE END 0 */
 
@@ -100,7 +105,7 @@ int main(void)
   /* USER CODE END 2 */
 
 	myAccConfigDef.dataRate = LIS3DSH_DATARATE_12_5;
-	myAccConfigDef.fullScale = LIS3DSH_FULLSCALE_4;
+	myAccConfigDef.fullScale = LIS3DSH_FULLSCALE_2;
 	myAccConfigDef.antiAliasingBW = LIS3DSH_FILTER_BW_50;
 	myAccConfigDef.enableAxes = LIS3DSH_XYZ_ENABLE;
 	myAccConfigDef.interruptEnable = false;
@@ -118,10 +123,13 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	
+	
 		
 		if(LIS3DSH_PollDRDY(1000) == true){
 			myData = LIS3DSH_GetDataScaled();
 		}
+		
+		LIS3DSH_ReadIO(LIS3DSH_OUT_TEMP, &temp, 1);
 		
 
 		

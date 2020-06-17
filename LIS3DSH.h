@@ -58,10 +58,10 @@ extern I2C_HandleTypeDef hi2c1;
 #define LIS3DSH_DATARATE_1600                ((uint8_t)0x90)  /* 1600  Hz Normal Mode */
 
 //3. Full scale
-#define LIS3DSH_FULLSCALE_2                  ((uint8_t)0x00)  /* 2 g  */
-#define LIS3DSH_FULLSCALE_4                  ((uint8_t)0x08)  /* 4 g  */
-#define LIS3DSH_FULLSCALE_6                  ((uint8_t)0x10)  /* 6 g  */
-#define LIS3DSH_FULLSCALE_8                  ((uint8_t)0x18)  /* 8 g  */
+#define LIS3DSH_FULLSCALE_2                  ((uint8_t)0x00)  /* 2  g  */
+#define LIS3DSH_FULLSCALE_4                  ((uint8_t)0x08)  /* 4  g  */
+#define LIS3DSH_FULLSCALE_6                  ((uint8_t)0x10)  /* 6  g  */
+#define LIS3DSH_FULLSCALE_8                  ((uint8_t)0x18)  /* 8  g  */
 #define LIS3DSH_FULLSCALE_16                 ((uint8_t)0x20)  /* 16 g */
 
 //4. Anti-Aliasing Bandwidth
@@ -83,6 +83,15 @@ extern I2C_HandleTypeDef hi2c1;
 #define LIS3DSH_SENSITIVITY_0_24G            0.24  /* 0.24 mg/digit*/
 #define LIS3DSH_SENSITIVITY_0_73G            0.73  /* 0.73 mg/digit*/
 
+#define LIS3DSH_SETT1 0x5B
+#define LIS3DSH_SETT2 0x7B 
+
+#define LIS3DSH_PEAK1 0x19
+#define LIS3DSH_PEAK2 0x1A
+
+#define LIS3DSH_MASK1_A 0x5A
+//#define LIS3DSH_
+//#define LIS3DSH_
 /* Tyoedefs Decleration ------------------------------------------------------------------*/
 //1. Accelerometer Configuration struct
 typedef struct 
@@ -112,12 +121,6 @@ typedef struct
 
 
 /* Function Decleration ------------------------------------------------------------------*/
-void writeReg(uint8_t reg, uint8_t value);
-uint8_t readReg(uint8_t reg);
-void startup(void);
-uint8_t readAcc();
-void readAccel(int16_t *pX, int16_t *pY, int16_t *pZ);
-
 void LIS3DSH_X_calibrate(float x_min, float x_max);
 void LIS3DSH_Y_calibrate(float y_min, float y_max);
 void LIS3DSH_Z_calibrate(float z_min, float z_max);
@@ -125,8 +128,11 @@ void LIS3DSH_Z_calibrate(float z_min, float z_max);
 void LIS3DSH_WriteIO(uint8_t reg, uint8_t *dataW, uint8_t size);
 void LIS3DSH_ReadIO(uint8_t reg, uint8_t *dataR, uint8_t size);
 void LIS3DSH_Init(I2C_HandleTypeDef *accI2C, LIS3DSH_InitTypeDef *accInitDef);
+
 bool LIS3DSH_PollDRDY(uint32_t msTimeout);
+
 LIS3DSH_DataScaled LIS3DSH_GetDataScaled(void);
+
 LIS3DSH_DataRaw LIS3DSH_GetDataRaw(void);
 
 
