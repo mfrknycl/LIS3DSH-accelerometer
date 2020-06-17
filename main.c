@@ -59,7 +59,6 @@ static void MX_I2C1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 int deneme = 0;
-int16_t x, y, z;
 LIS3DSH_DataScaled myData;
 
 
@@ -95,14 +94,11 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-	uint8_t num = 0xEF;
-	uint8_t res = 0;
+
 
 	//startup();
   /* USER CODE END 2 */
-	//LIS3DSH_Y_calibrate(-17470, 7210);
-	//LIS3DSH_X_calibrate(-16658, 16097);
-	//LIS3DSH_Z_calibrate(-16541, 17908);
+
 	myAccConfigDef.dataRate = LIS3DSH_DATARATE_12_5;
 	myAccConfigDef.fullScale = LIS3DSH_FULLSCALE_4;
 	myAccConfigDef.antiAliasingBW = LIS3DSH_FILTER_BW_50;
@@ -110,6 +106,10 @@ int main(void)
 	myAccConfigDef.interruptEnable = false;
 
 	LIS3DSH_Init(&hi2c1, &myAccConfigDef);
+	
+	LIS3DSH_X_calibrate(-996.0, 971.0);
+	LIS3DSH_Y_calibrate(-1043.0, 1029.0);
+	LIS3DSH_Z_calibrate(-992.0, 1072.0);
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -117,15 +117,14 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	
+		
 		if(LIS3DSH_PollDRDY(1000) == true){
 			myData = LIS3DSH_GetDataScaled();
 		}
-
 		
 
-
-		//readAccel(&x, &y, &z);
-
+		
 
 
   }
