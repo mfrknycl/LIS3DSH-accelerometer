@@ -60,12 +60,17 @@ static void MX_I2C1_Init(void);
 /* USER CODE BEGIN 0 */
 int deneme = 0;
 LIS3DSH_DataScaled myData;
+LIS3DSH_DataScaled myDataFilt;
 uint8_t temp = 0;
 
 uint8_t data1 = 0x00;
 uint8_t data2 = 0xF0;
 uint8_t data3 = 0xA0;
 uint8_t res = 0;
+
+uint8_t data ;
+double temperature;
+
 
 /* USER CODE END 0 */
 
@@ -77,6 +82,8 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	LIS3DSH_InitTypeDef myAccConfigDef;
+
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -112,9 +119,9 @@ int main(void)
 
 	LIS3DSH_Init(&hi2c1, &myAccConfigDef);
 	
-	LIS3DSH_X_calibrate(-996.0, 971.0);
-	LIS3DSH_Y_calibrate(-1043.0, 1029.0);
-	LIS3DSH_Z_calibrate(-992.0, 1072.0);
+	//LIS3DSH_X_calibrate(-990.0, 970.0);
+	//LIS3DSH_Y_calibrate(-1042.0, 1031.0);
+	//LIS3DSH_Z_calibrate(-987.0, 1074.0);
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -123,14 +130,35 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	
+		float x_sum = 0;
+		float y_sum = 0; 
+		float z_sum= 0;
+		
+		for(int i=0; i<10;i++){
+			if(LIS3DSH_PollDRDY(1000) == true){
+				myData = LIS3DSH_GetDataScaled();
+				x_sum += myData.x;
+				y_sum += myData.y;
+				z_sum += myData.z;
+			}
+	}
+				
+
 	
+				myDataFilt.x = x_sum/10;
+				myDataFilt.y = y_sum/10;
+				myDataFilt.z = z_sum/10;
+	
+		LIS3DSH_Click_IntConfig();
+	
+
+		LIS3DSH_ReadReg(LIS3DSH_OUT_TEMP, &data, 1);
+
+		temperature =  ((double)data - 0) / 256;
+ 
 		
-		if(LIS3DSH_PollDRDY(1000) == true){
-			myData = LIS3DSH_GetDataScaled();
-		}
 		
-		LIS3DSH_ReadIO(LIS3DSH_OUT_TEMP, &temp, 1);
-		
+
 
 		
 
@@ -240,7 +268,17 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(GPIO_Pin);
 
+  /* NOTE: This function should not be modified, when the callback is needed,
+            the HAL_GPIO_EXTI_Callback could be implemented in the user file
+   */ 
+
+	
+}
 /* USER CODE END 4 */
 
 /**

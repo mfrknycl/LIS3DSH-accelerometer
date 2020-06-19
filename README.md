@@ -6,6 +6,8 @@ The LIS3DSH sensor is available to the user through an analog-to-digital convert
 
 This library made for STM32F091 microcontroller but it can be applied to other STMt32 families.
 
+This library was taken from [MYaqoobEmbedded](https://github.com/MYaqoobEmbedded/STM32-Tutorials/tree/master/Tutorial%2027%20-%20Motion%203-Axis%20Accelerometer%20LIS3DSH) and applied to this project using I2C protocol.
+
 
 
 ## Getting Started

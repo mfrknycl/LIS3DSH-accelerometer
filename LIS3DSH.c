@@ -21,7 +21,7 @@ static float __Z_Scale = 1.0f;
 	* @param dataW Pointer to data buffer
 	* @param size Amount of data to be sent
   */
-void LIS3DSH_WriteIO(uint8_t reg, uint8_t *dataW, uint8_t size){
+void LIS3DSH_WriteReg(uint8_t reg, uint8_t *dataW, uint8_t size){
 	HAL_I2C_Mem_Write(&hi2c1, LIS3DSH_I2C_ADDR, reg, 1, (uint8_t*)dataW, size, 10);
 }
 
@@ -31,7 +31,7 @@ void LIS3DSH_WriteIO(uint8_t reg, uint8_t *dataW, uint8_t size){
 	* @param dataR Pointer to data buffer
 	* @param size Amount of data to be sent
   */
-void LIS3DSH_ReadIO(uint8_t reg, uint8_t *dataR, uint8_t size){
+void LIS3DSH_ReadReg(uint8_t reg, uint8_t *dataR, uint8_t size){
 	HAL_I2C_Mem_Read(&hi2c1, LIS3DSH_I2C_ADDR, reg, 1, (uint8_t*)dataR, size, 10);
 }
 
@@ -43,28 +43,28 @@ void LIS3DSH_ReadIO(uint8_t reg, uint8_t *dataR, uint8_t size){
 									 the configuration information for the Accelerometer.
 	*/
 void LIS3DSH_Init(I2C_HandleTypeDef *hi2c, LIS3DSH_InitTypeDef *accInitDef){
-	uint8_t spiData = 0;
+	uint8_t I2CData = 0;
 	
 	memcpy(&hi2c1, hi2c, sizeof(*hi2c));
 	//** 1. Enable Axes and Output Data Rate **//
 	//Set CTRL REG4 settings value
-	spiData |= (accInitDef->enableAxes & 0x07);		//Enable Axes
-	spiData |= (accInitDef->dataRate & 0xF0);			//Output Data Rate
+	I2CData |= (accInitDef->enableAxes & 0x07);		//Enable Axes
+	I2CData |= (accInitDef->dataRate & 0xF0);			//Output Data Rate
 	//Write to accelerometer
-	LIS3DSH_WriteIO(LIS3DSH_CTRL_REG4_ADDR, &spiData, 1);
+	LIS3DSH_WriteReg(LIS3DSH_CTRL_REG4_ADDR, &I2CData, 1);
 	
 	//** 2. Full-Scale selection, Anti-aliasing BW, self test and 4-wire SPI **//
-	spiData = 0;
-	spiData |= (accInitDef->antiAliasingBW & 0xC0);		//Anti-aliasing BW
-	spiData |= (accInitDef->fullScale & 0x38);				//Full-Scale
+	I2CData = 0;
+	I2CData |= (accInitDef->antiAliasingBW & 0xC0);		//Anti-aliasing BW
+	I2CData |= (accInitDef->fullScale & 0x38);				//Full-Scale
 	//Write to accelerometer
-	LIS3DSH_WriteIO(LIS3DSH_CTRL_REG5_ADDR, &spiData, 1);
+	LIS3DSH_WriteReg(LIS3DSH_CTRL_REG5_ADDR, &I2CData, 1);
 	
 	//** 3. Interrupt Configuration **//
 	if(accInitDef->interruptEnable){
-		spiData = 0x88;
+		I2CData = 0x88;
 		//Write to accelerometer
-		LIS3DSH_WriteIO(LIS3DSH_CTRL_REG3_ADDR, &spiData, 1);
+		LIS3DSH_WriteReg(LIS3DSH_CTRL_REG3_ADDR, &I2CData, 1);
 	}
 	
 	//Assign sensor sensitivity (based on Full-Scale)
@@ -100,7 +100,7 @@ bool LIS3DSH_PollDRDY(uint32_t msTimeout){
 	uint32_t startTick = HAL_GetTick();
 	do{
 		//Read status register with a timeout
-		LIS3DSH_ReadIO(0x27, &Acc_status, 1);
+		LIS3DSH_ReadReg(0x27, &Acc_status, 1);
 		if(Acc_status & 0x07)break;
 		
 	}while((Acc_status & 0x07)==0 && (HAL_GetTick() - startTick) < msTimeout);
@@ -118,15 +118,15 @@ LIS3DSH_DataRaw LIS3DSH_GetDataRaw(void){
 	uint8_t I2CBuf[2];
 	LIS3DSH_DataRaw tempDataRaw;
 	//Read X data
-	LIS3DSH_ReadIO(LIS3DSH_OUT_X_L_ADDR, I2CBuf, 2);
+	LIS3DSH_ReadReg(LIS3DSH_OUT_X_L_ADDR, I2CBuf, 2);
 	tempDataRaw.x = ((I2CBuf[1] << 8) + I2CBuf[0]);
 	
 	//Read Y data
-	LIS3DSH_ReadIO(LIS3DSH_OUT_Y_L_ADDR, I2CBuf, 2);
+	LIS3DSH_ReadReg(LIS3DSH_OUT_Y_L_ADDR, I2CBuf, 2);
 	tempDataRaw.y = ((I2CBuf[1] << 8) + I2CBuf[0]);
 	
 	//Read Z data
-	LIS3DSH_ReadIO(LIS3DSH_OUT_Z_L_ADDR, I2CBuf, 2);
+	LIS3DSH_ReadReg(LIS3DSH_OUT_Z_L_ADDR, I2CBuf, 2);
 	tempDataRaw.z = ((I2CBuf[1] << 8) + I2CBuf[0]);
 	
 	return tempDataRaw;
@@ -180,3 +180,50 @@ void LIS3DSH_Z_calibrate(float z_min, float z_max)
 	__Z_Scale = (2*10000)/(z_max - z_min);
 }
 
+/**
+  * @brief  Set LIS3DSH for click detection
+  * @param  None
+  * @retval None
+  */
+void LIS3DSH_Click_IntConfig(void){
+	uint8_t ctrl = 0x00;
+  LIS3DSH_InterruptConfigTypeDef   LIS3DSH_InterruptStruct; 
+	
+	//ACCELERO_IO_ITConfig();
+	
+	/* Set LIS3DSH Interrupt configuration */
+  LIS3DSH_InterruptStruct.Interrupt_Selection_Enable = LIS3DSH_INTERRUPT_2_ENABLE;
+  LIS3DSH_InterruptStruct.Interrupt_Request = LIS3DSH_INTERRUPT_REQUEST_LATCHED;
+  LIS3DSH_InterruptStruct.Interrupt_Signal = LIS3DSH_INTERRUPT_SIGNAL_HIGH;
+  LIS3DSH_InterruptStruct.State_Machine1_Enable = LIS3DSH_SM_DISABLE;
+  LIS3DSH_InterruptStruct.State_Machine2_Enable = LIS3DSH_SM_ENABLE;
+  LIS3DSH_InterruptStruct.State_Machine2_Interrupt = LIS3DSH_SM_INT1;
+	
+	//LIS3DSH_InterruptConfig(&LIS3DSH_InterruptStruct);
+	
+	  /* Set LIS3DSH State Machines configuration */
+  ctrl=0x03; 
+  LIS3DSH_WriteReg(LIS3DSH_TIM2_1_L_ADDR, &ctrl, 1);
+  ctrl=0xC8; 
+  LIS3DSH_WriteReg(LIS3DSH_TIM1_1_L_ADDR, &ctrl, 1);
+  ctrl=0x45; 
+  LIS3DSH_WriteReg(LIS3DSH_THRS2_1_ADDR, &ctrl, 1);
+  ctrl=0xFC; 
+  LIS3DSH_WriteReg(LIS3DSH_MASK1_A_ADDR, &ctrl, 1);
+  ctrl=0xA1; 
+  LIS3DSH_WriteReg(LIS3DSH_SETT1_ADDR, &ctrl, 1);
+  ctrl=0x01; 
+  LIS3DSH_WriteReg(LIS3DSH_PR1_ADDR, &ctrl, 1);
+
+  LIS3DSH_WriteReg(LIS3DSH_SETT2_ADDR, &ctrl, 1);
+  
+  /* Configure State Machine 2 to detect single click */
+  LIS3DSH_WriteReg(LIS3DSH_ST2_1_ADDR, &ctrl, 1);
+  ctrl=0x06; 
+  LIS3DSH_WriteReg(LIS3DSH_ST2_2_ADDR, &ctrl, 1);
+  ctrl=0x28; 
+  LIS3DSH_WriteReg(LIS3DSH_ST2_3_ADDR, &ctrl, 1);
+  ctrl=0x11; 
+  LIS3DSH_WriteReg(LIS3DSH_ST2_4_ADDR, &ctrl, 1);
+	
+}
