@@ -13,3 +13,8 @@ This library was taken from [MYaqoobEmbedded](https://github.com/MYaqoobEmbedded
 ## Getting Started
 
 **To include this library, add** `#include "LIS3DH_device.h"` **at the begging of the code.**
+
+
+## License & copyright
+
+Licensed under the [MIT License](LICENSE).
